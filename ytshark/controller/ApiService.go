@@ -1,44 +1,34 @@
-package main
+package controller
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"ytshark/model"
 
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	router := gin.Default()
-	router.RedirectFixedPath = true
-	router.POST("/post", post)
-	router.GET("/json", returnJson)
-	router.GET("/json2", returnJson2)
-	router.Any("/any", any)
-	router.POST("/employee", demoHandler)
-	router.Run(":8080")
-}
-
-func returnJson(c *gin.Context) {
+func ReturnJson(c *gin.Context) {
 	m := map[string]string{"status": "ok"}
 	j, _ := json.Marshal(m)
 	c.Data(http.StatusOK, "application/json", j)
 }
 
-func returnJson2(c *gin.Context) {
+func ReturnJson2(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"狀態": "ok",
 	})
 }
 
-func post(c *gin.Context) {
+func Post(c *gin.Context) {
 	//msg := c.PostForm("input")
 	// msg := c.DefaultPostForm("input", "表單沒有input。") // 沒有輸入參數時 可設定預設值
 
 	// c.String(http.StatusOK, "您輸入的文字為: \n%s", msg)
 
-	json := User{}
+	json := model.User{}
 	c.ShouldBind((&json))
 	fmt.Printf("%v", &json)
 	log.Println("長度", len(json.Name))
@@ -71,13 +61,13 @@ func post(c *gin.Context) {
 
 }
 
-func any(c *gin.Context) {
+func Any(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": "ok",
 	})
 }
 
-func demoHandler(c *gin.Context) {
+func DemoHandler(c *gin.Context) {
 
 	var m map[string]interface{}
 	err := c.ShouldBind(&m)
@@ -91,9 +81,4 @@ func demoHandler(c *gin.Context) {
 		"name": m["name"],
 		"pwd":  m["pwd"],
 	})
-}
-
-type User struct {
-	Name string `json:"name"`
-	Pwd  string `json:"pwd"`
 }
